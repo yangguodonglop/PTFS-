@@ -56,6 +56,21 @@ export default {
             return null;
         }
 
-    }
-
+    },
+    getTimes:function(e){
+        let year = e.getFullYear();
+        let month = e.getMonth() + 1;
+        let day = e.getDate();
+        let hh =
+         e.getHours() < 10
+            ? "0" + e.getHours()
+            : e.getHours();
+        let mm =
+          e.getMinutes() < 10
+            ? "0" + e.getMinutes()
+            : e.getMinutes();
+        let endTime = `${year}-${month}-${day} ${hh}:${mm}`;  
+        return  endTime
+    },
+  
 };

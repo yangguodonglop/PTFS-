@@ -16,7 +16,7 @@
 </template>
 
 <script>
-  import { requestLogin } from '../api/api';
+  import { requestLoginOwn } from '../api/api';
   //import NProgress from 'nprogress'
   export default {
     data() {
@@ -51,9 +51,11 @@
             this.logining = true;
             //NProgress.start();
             var loginParams = { username: this.ruleForm2.account, password: this.ruleForm2.checkPass };
-            requestLogin(loginParams).then(data => {
+            alert("***")
+            requestLoginOwn(loginParams).then(data => {
               this.logining = false;
               //NProgress.done();
+              console.log(data)
               let { msg, code, user } = data;
               if (code !== 200) {
                 this.$message({
