@@ -1,4 +1,5 @@
 <template>
+<div>
 	<el-form ref="form" :model="form" label-width="80px" @submit.prevent="onSubmit" style="margin:20px;width:60%;min-width:600px;">
 		<el-form-item label="活动名称">
 			<el-input v-model="form.name"></el-input>
@@ -43,12 +44,18 @@
 			<el-button @click.native.prevent>取消</el-button>
 		</el-form-item>
 	</el-form>
+	    <Search @selectFunc="selectFunc" :searchList="searchList" :secondList="secondList"></Search>
+</div>
 </template>
 
 <script>
+import Search from '../../components/ceshi'
 	export default {
 		data() {
 			return {
+						searchList: ['草船借箭1', '大富翁1', '测试数据1'],
+						secondList:"测试",
+
 				form: {
 					name: '',
 					region: '',
@@ -61,10 +68,16 @@
 				}
 			}
 		},
+		components:{
+			Search
+		},
 		methods: {
 			onSubmit() {
 				console.log('submit!');
-			}
+			},
+			 selectFunc(value){
+          alert(value+"$$")
+      },
 		}
 	}
 

@@ -1,5 +1,5 @@
 <template>
-	<section>
+	<section class="chart-container">
 		<!--工具条-->
 	
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
@@ -10,8 +10,6 @@
 								<el-tab-pane label="节点分布" name="first">
 									<el-col :span="14">
                     <div class="div_MapDetails" v-if="MapDetailsShow">
-                      <!-- <p>节点概览：{{details_gl}}</p>
-                      <p>节点数：{{details_No}}</p> -->
             
                       <p  style=" width:200px;word-wrap:break-word;margin-top:20px;white-space: nowrap; overflow: hidden;text-overflow: ellipsis;">节点ID:{{details_minerId}}</p>
                       <p>节点类型:{{details_lx}}</p>
@@ -30,10 +28,6 @@
 									<div class="item_one_child_r">
 										<div class="child_r_t">
 												<el-checkbox-group v-model="checkList">
-                          <!-- <el-checkbox label="超级管理节点" class="child_checkbox"></el-checkbox>
-                          <el-checkbox label="超级储存节点"></el-checkbox>
-                          <el-checkbox label="矿工节点"></el-checkbox>
-                          <el-checkbox label="应用层次节点"></el-checkbox> -->
                           <el-checkbox v-for="item in testarray"  :key="item.id" :label="item.name" :value="item.id"  @change="handleCheckedChange(item)">{{item.name}}</el-checkbox>
 											
 											</el-checkbox-group>
@@ -44,15 +38,6 @@
 										<div class="child_r_b" v-for="item in nodeTypeCount" :key="item.id">
 											{{item.nodeType}}：	{{item.nodeCount}}
 										</div>
-                    	<!-- <div class="child_r_b">
-											节点数量：{{details_length}}
-										</div>
-                    	<div class="child_r_b">
-											节点数量：{{details_length}}
-										</div>
-                    	<div class="child_r_b">
-											节点数量：{{details_length}}
-										</div> -->
 										<div class="child_r_table">
 											<el-table
 												:data="tableDataDetails.slice((currentPageJd-1)*pagesizeJd,currentPageJd*pagesizeJd)"
@@ -90,7 +75,7 @@
 										<div class="item_top">
 											<div class="item_top_id">节点ID</div>
 											<div class="item_top_input">
-												<el-input v-model="input_nodeId" placeholder="请输入节点ID查询"></el-input>
+												<el-input v-model.trim="input_nodeId" placeholder="请输入节点ID查询"></el-input>
 											</div>
 											<div class="item_top_button">
 												<el-button type="primary" @click="getNodesDetails()">查询</el-button>
@@ -250,7 +235,7 @@
               </el-col>
                 <el-col :span="20">
               <div class="create_div_input">
-                <el-input v-model="descript" placeholder="请输入文件名"></el-input>
+                <el-input v-model.trim="descript" placeholder="请输入文件名"></el-input>
               </div>
               </el-col>
               </div>
@@ -619,6 +604,12 @@ export default {
 </script>
 
 <style  lang="less">
+.chart-container {
+  // width: 100%;
+  float: initial !important;
+  min-width: 1450px;
+
+}
 .new_grid-content {
   height: auto;
   //background: #999999;
@@ -627,7 +618,7 @@ export default {
       margin-left: 15px;
     }
 
-    width: 85%;
+    width: 100%;
     height: auto;
     margin: 50px auto;
 

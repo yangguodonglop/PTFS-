@@ -2,7 +2,7 @@
     <section class="chart-container">
          <el-row>
             <el-col :span="6">
-                <div class="new_cont" style="width:100%;">
+                <div class="new_cont new_cont_active1" style="width:100%;">
                     <div class="item_one">在线节点个数</div>
                     <div class="item_two">{{dataOne}}</div>
                 </div>
@@ -190,21 +190,23 @@ export default {
     };
   },
   mounted: function() {
+
     //获取当前时间
     let nowDate = new Date();
     let endTime = this.common.getTimes(nowDate);
     this.valueOnlineend = endTime; // 当前的时间点
-    this.valueDevStoreend = endTime;
-    this.valueUsageend = endTime;
-    this.valueFileend = endTime;
+    this.valueDevStoreend=endTime
+    this.valueUsageend=endTime
+    this.valueFileend=endTime
 
     //获取往前往前一星期时间
-    let befDate = new Date(nowDate.getTime() - 7 * 24 * 3600 * 1000);
+    let befDate = new Date(nowDate.getTime() - 7 * 24 * 3600 * 1000)
     let startTime = this.common.getTimes(befDate);
     this.valueOnlinestrat = startTime; // 向前推迟一周的时间点
-    this.valueDevStorestart = startTime;
-    this.valueUsagestart = startTime;
-    this.valueFilestart = startTime;
+    this.valueDevStorestart=startTime
+    this.valueUsagestart=startTime
+    this.valueFilestart=startTime
+
 
     //this.getNowFormatDate()
 
@@ -213,6 +215,7 @@ export default {
       startTime: this.valueOnlinestrat,
       endTime: this.valueOnlineend
     };
+
 
     //tilte展示数据
     querySummary().then(data => {
@@ -511,8 +514,9 @@ export default {
 
     //点击刷新请求数据
     getData(e) {
+  
       switch (e) {
-        case 1:
+        case 1: 
           var timeParams = {
             startTime: this.valueOnlinestrat,
             endTime: this.valueOnlineend
@@ -596,24 +600,40 @@ export default {
       }
     }
   }
+
 };
 </script>
 
 <style scoped lang="less">
 .chart-container {
-  width: 100%;
+  // width: 100%;
   float: left;
+  min-width: 1450px;
+
 }
 
 .el-col {
   padding: 30px 20px;
 }
 .new_cont {
-  background: #f2f2f2;
+ 
   height: 80px;
   text-align: center;
   color: #48576a;
   font-size: 16px;
+}
+.new_cont_active1{
+  background-image: linear-gradient(159deg, 
+		#b87cf6 0%, 
+		#903be7 100%), 
+	linear-gradient(
+		#ffffff, 
+		#ffffff);
+	background-blend-mode: normal, 
+		normal;
+	box-shadow: 3px 0px 7px 0px 
+		rgba(0, 0, 0, 0.12);
+	border-radius: 4px;
 }
 .new_cont .item_one {
   padding-top: 20px;
@@ -633,4 +653,5 @@ export default {
     margin-left: 20px;
   }
 }
+
 </style>

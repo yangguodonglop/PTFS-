@@ -72,5 +72,13 @@ export default {
         let endTime = `${year}-${month}-${day} ${hh}:${mm}`;  
         return  endTime
     },
+    checkTimes:function(a,b){
+        if(a>=b){
+            return false
+        }
+        else{
+            return true
+        }
+    },
   
 };

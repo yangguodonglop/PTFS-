@@ -1,15 +1,17 @@
 <template>
+<div class="myownStyle">
 	<el-row class="container">
 		<el-col :span="24" class="header">
 			<el-col :span="10" class="logo" :class="collapsed?'logo-collapse-width':'logo-width'">
-				{{collapsed?'':sysName}}
+		
+				<div><img src="../assets/logo1.png" width="102px" height="35px"></div>
 			</el-col>
 			<!-- <el-col :span="10">
 				<div class="tools" @click.prevent="collapse">
 					<i class="fa fa-align-justify"></i>
 				</div>
 			</el-col> -->
-			<el-col :span="4" class="userinfo">
+			<!-- <el-col :span="4" class="userinfo">
 				<el-dropdown trigger="hover">
 					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span>
 					<el-dropdown-menu slot="dropdown">
@@ -18,7 +20,7 @@
 						<el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
-			</el-col>
+			</el-col> -->
 		</el-col>
 		<el-col :span="24" class="main">
 			<aside :class="collapsed?'menu-collapsed':'menu-expanded'">
@@ -69,6 +71,7 @@
 			</section>
 		</el-col>
 	</el-row>
+	</div>
 </template>
 
 <script>
@@ -140,7 +143,8 @@
 
 <style scoped lang="scss">
 	@import '~scss_vars';
-	
+	@import '../assets/newstyle.scss';
+	//@import '~scss_newstyle';
 	.container {
 		position: absolute;
 		top: 0px;
@@ -177,7 +181,7 @@
 				border-right-width: 1px;
 				border-right-style: solid;
 				img {
-					width: 40px;
+					width: auto;
 					float: left;
 					margin: 10px 10px 10px 18px;
 				}

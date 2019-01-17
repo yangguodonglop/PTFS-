@@ -1,5 +1,5 @@
 <template>
-	<section>
+	<section class="chart-container">
 		<el-tabs v-model="activeName" @tab-click="handleClick">
     	<el-tab-pane label="文件查询" name="first">
 			<!--工具条-->
@@ -24,16 +24,16 @@
    					 </el-date-picker>
 				</el-form-item>
 				<el-form-item label="用户ID">
-					<el-input v-model="findForm.userId"></el-input>
+					<el-input v-model.trim="findForm.userId"></el-input>
 				</el-form-item>
 				<el-form-item label="文件名">
-					<el-input v-model="findForm.fileName"></el-input>
+					<el-input v-model.trim="findForm.fileName"></el-input>
 				</el-form-item>
 				<el-form-item label="矿机节点ID">
-					<el-input v-model="findForm.minerId" style="width:400px"></el-input>
+					<el-input v-model.trim="findForm.minerId" style="width:400px"></el-input>
 				</el-form-item>
          <el-form-item label="文件哈希" >
-					<el-input v-model="findForm.fileHashId" style="width:468px"></el-input>
+					<el-input v-model.trim="findForm.fileHashId" style="width:468px"></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary"  @click="onSubmit">查询</el-button>
@@ -100,13 +100,13 @@
    					 </el-date-picker>
 				</el-form-item>
 				<el-form-item label="文件名">
-					<el-input v-model="blackListForm.fileName"></el-input>
+					<el-input v-model.trim="blackListForm.fileName"></el-input>
 				</el-form-item>
 				<el-form-item label="文件哈希">
-					<el-input v-model="blackListForm.fileHashId" style="width:450px;"></el-input>
+					<el-input v-model.trim="blackListForm.fileHashId" style="width:450px;"></el-input>
 				</el-form-item>
 				<el-form-item label="描述">
-					<el-input v-model="blackListForm.descript"></el-input>
+					<el-input v-model.trim="blackListForm.descript"></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary"  @click="onSubmitBlackList('single')">查询</el-button>
@@ -278,7 +278,7 @@
               </el-col>
                 <el-col :span="20">
               <div class="create_div_input">
-                <el-input v-model="createForm.fileName" placeholder="请输入文件名"></el-input>
+                <el-input v-model.trim="createForm.fileName" placeholder="请输入文件名"></el-input>
               </div>
               </el-col>
               </div>
@@ -291,7 +291,7 @@
               </el-col>
                 <el-col :span="20">
               <div class="create_div_input">
-                <el-input v-model="createForm.fileHashId" placeholder="请输入文件ID"></el-input>
+                <el-input v-model.trim="createForm.fileHashId" placeholder="请输入文件ID"></el-input>
               </div>
               </el-col>
                   </div>
@@ -304,7 +304,7 @@
               </el-col>
                 <el-col :span="20">
               <div class="create_div_input">
-                <el-input v-model="createForm.descript" placeholder="请输入文件描述"></el-input>
+                <el-input v-model.trim="createForm.descript" placeholder="请输入文件描述"></el-input>
               </div>
               </el-col>
                     </div>
@@ -506,7 +506,7 @@ export default {
           //    type:'success',
           //    message:res.msg
           //  })
-          this.getNewBlacklist()    
+          this.getNewBlacklist();
         } else {
         }
       });
@@ -558,7 +558,7 @@ export default {
       addNewForbiddenFile(param).then(res => {
         let { result, msg, data } = res;
         if (result == "ok") {
-            this.getNewBlacklist()    
+          this.getNewBlacklist();
         } else {
           this.$message({
             message: msg,
@@ -655,7 +655,7 @@ export default {
     onAllCreate: function() {},
     //详情选项卡
     handleClick(tab, event) {
-      console.log(tab, event);
+      // console.log(tab, event);
     },
 
     getSTimestart(val) {
@@ -695,32 +695,30 @@ export default {
         if ((result = "ok")) {
           this.listLoading = false;
           this.tableDataBlacklist = res.data;
-        
         }
       });
     },
 
     //新增，批量新增，删除后不传结束时间的查询
-  getNewBlacklist(){
-    let newparam = {};
-          newparam.startTime = this.blackListForm.startTime;
-          newparam.descript = "";
-          newparam.fileHashId = "";
-          newparam.fileName = "";
-          newparam.endTime = "";
+    getNewBlacklist() {
+      let newparam = {};
+      newparam.startTime = this.blackListForm.startTime;
+      newparam.descript = "";
+      newparam.fileHashId = "";
+      newparam.fileName = "";
+      newparam.endTime = "";
 
-          this.listLoading = true;
-          //NProgress.start();
+      this.listLoading = true;
+      //NProgress.start();
 
-          queryBlackListByCondition(newparam).then(res => {
-            let { result, msg, data } = res;
-            if ((result = "ok")) {
-              this.listLoading = false;
-              this.tableDataBlacklist = res.data;
-              console.log(res.data);
-            }
-          });
-  },
+      queryBlackListByCondition(newparam).then(res => {
+        let { result, msg, data } = res;
+        if ((result = "ok")) {
+          this.listLoading = false;
+          this.tableDataBlacklist = res.data;
+        }
+      });
+    },
     //删除
     handleDel: function(index, row) {
       this.$confirm("确认删除该记录吗?", "提示", {
@@ -733,7 +731,7 @@ export default {
           updateBlackListFile(param).then(res => {
             let { result, msg, data } = res;
             if ((result = "ok")) {
-              this.getNewBlacklist()
+              this.getNewBlacklist();
             }
           });
         })
@@ -765,20 +763,25 @@ export default {
           });
         }
       });
-
     },
 
     handleClick(tab, event) {
-      console.log(tab, event);
+     
     },
     getUser: function() {},
 
     //文件查询
     onSubmit() {
       let param = this.findForm;
+      alert(JSON.stringify(param))
       this.listLoading = true;
-      //NProgress.start();
-      console.log(param);
+      var timeStatus = this.common.checkTimes(param.startTime, param.endTime);
+      if (timeStatus == false) {
+        this.$message.error("结束时间必须大于起始时间");
+         this.listLoading = false;
+        return false;
+        
+      }
       queryFileSummaryByConditions(param).then(res => {
         let { result, msg, data } = res;
         if (result == "ok") {
@@ -805,7 +808,15 @@ export default {
         };
         param = this.blackListFormAll;
       } else {
+        
         param = this.blackListForm;
+          var timeStatus = this.common.checkTimes(param.startTime, param.endTime);
+      if (timeStatus == false) {
+        this.$message.error("结束时间必须大于起始时间");
+         this.listLoading = false;
+        return false;
+        
+      }
       }
 
       this.dialogCreateVisible = false;
@@ -827,6 +838,11 @@ export default {
 </script>
 
 <style lang="less">
+.chart-container {
+  // width: 100%;
+  float: left;
+  min-width: 1450px;
+}
 .customWidth {
   width: 85%;
 }
@@ -854,7 +870,7 @@ export default {
 .dialog_item_table {
   width: 100%;
   height: auto;
-   
+
   padding: 30px auto;
   overflow: hidden;
   margin: 50px auto;
