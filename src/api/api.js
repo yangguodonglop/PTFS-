@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 let base = '';
-let ownbase='http://47.99.193.140:8084'//服务器接口
-//let ownbase='http://192.168.1.115:8084'//本地接口
+let ownbase='http://47.99.193.140:8083'//服务器接口
+//let ownbase='http://192.168.0.182:8088'//本地接口
+//let ownbase='http://192.168.0.115:8085'//本地接口
 
 //let ownbaselogin='http://mapi.xinlv123.com/xltx/login'
 
@@ -45,7 +46,7 @@ export const queryStoreUsageHistgraph= params => { return axios.post(`${ownbase}
 //tilte显示数量
 export const querySummary= params => { return axios.get(`${ownbase}/overview/querySummary`, params).then(res => res.data); };
 
-//存储量/存储空间
+//存储量/存储空间  
 export const queryDevStoreHistgraph= params => { return axios.post(`${ownbase}/overview/queryDevStoreHistgraph`, params).then(res => res.data); };
 //存储文件数
 
@@ -96,6 +97,11 @@ export const updateNodeConfig= params => { return axios.post(`${ownbase}/PTFSFil
 
 //更新节点配置上传
 //export const updateNodeConfig= params => { return axios.post(`${ownbase}/PTFSFileManage/updateNodeConfig`, params).then(res => res.data); };
+
+//分区分组信息展示
+export const queryRegionGroupInfo= params => { return axios.post(`${ownbase}/PTFSNodeManage/queryRegionGroupInfo`, params).then(res => res.data); };
+//分区分组点击组数查看i详情
+export const queryGroupInfo= params => { return axios.post(`${ownbase}/PTFSNodeManage/queryGroupInfo`, params).then(res => res.data); };
 
 
 

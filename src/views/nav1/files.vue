@@ -10,7 +10,7 @@
 						v-model="findForm.startTime"
 						type="datetime"
 						@change="getSTimestart"
-						 format="yyyy-MM-dd HH:mm"
+						 value-format="yyyy-MM-dd HH:mm"
 						placeholder="选择日期时间">
    					 </el-date-picker>
 				</el-form-item>
@@ -19,7 +19,7 @@
 						v-model="findForm.endTime"
             	@change="getSTimeend"
 						type="datetime"
-            format="yyyy-MM-dd HH:mm"
+            value-format="yyyy-MM-dd HH:mm"
 						placeholder="选择日期时间">
    					 </el-date-picker>
 				</el-form-item>
@@ -43,21 +43,21 @@
 
 		<!--列表-->
 		<template>
-			<el-table :data="tableData.slice((currentPageCx-1)*pagesizeCx,currentPageCx*pagesizeCx)" highlight-current-row v-loading="listLoading" style="width: 100%;">
+			<el-table :data="tableData.slice((currentPageCx-1)*pagesizeCx,currentPageCx*pagesizeCx)" highlight-current-row v-loading="listLoading" style="width: 100%;" :border="true">
 			<!-- <el-table-column type="selection" width="55">
 			</el-table-column> -->
-			<el-table-column type="index" width="60">
+			<el-table-column type="index" align="center" width="60">
 			</el-table-column>
-			<el-table-column prop="fileName" label="文件名" width="200" sortable>
+			<el-table-column prop="fileName" label="文件名" align="center" width="200" sortable>
 			</el-table-column>
-			<el-table-column prop="fileSize" label="文件大小" width="150"  sortable>
+			<el-table-column prop="fileSize" label="文件大小" align="center" width="150"  sortable>
 			</el-table-column>
-			<el-table-column prop="fileHashId" label="文件哈希" width="500" sortable>
+			<el-table-column prop="fileHashId" label="文件哈希" align="center" width="500" sortable>
 			</el-table-column>
-			<el-table-column prop="fileStoreTime" label="上传详情"  sortable>
+			<el-table-column prop="fileStoreTime" label="上传详情" align="center"  sortable>
 			</el-table-column>
-			<el-table-column label="操作" width="150">
-				<template scope="scope">
+			<el-table-column label="操作" width="150" align="center">
+				<template slot-scope="scope">
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">查看详情</el-button>
 					<!-- <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button> -->
 				</template>
@@ -86,7 +86,7 @@
 						v-model="blackListForm.startTime"
 						type="datetime"	
 						@change="getSTimestartBlackList"
-						 format="yyyy-MM-dd HH:mm"
+						 value-format="yyyy-MM-dd HH:mm"
 						placeholder="选择日期时间">
    					 </el-date-picker>
 				</el-form-item>
@@ -95,7 +95,7 @@
 						v-model="blackListForm.endTime"
 						type="datetime"
            @change="getSTimeendBlackList"
-           format="yyyy-MM-dd HH:mm"
+           value-format="yyyy-MM-dd HH:mm"
 						placeholder="选择日期时间">
    					 </el-date-picker>
 				</el-form-item>
@@ -119,20 +119,20 @@
 
 		<!--列表-->
 		<template>
-			<el-table :data="tableDataBlacklist.slice((currentPageHmd-1)*pagesizeHmd,currentPageHmd*pagesizeHmd)" highlight-current-row v-loading="loading" style="width: 100%;">
-				<el-table-column type="index" width="60">
+			<el-table :data="tableDataBlacklist.slice((currentPageHmd-1)*pagesizeHmd,currentPageHmd*pagesizeHmd)" highlight-current-row v-loading="loading" :border="true" style="width: 100%;">
+				<el-table-column type="index" width="60" align="center">
 				</el-table-column>
-				<el-table-column prop="fileName" label="文件名" sortable>
+				<el-table-column prop="fileName" label="文件名"  min-width="150" align="center" sortable>
 				</el-table-column>
-				<el-table-column prop="fileHashId" label="文件哈希"  sortable>
+				<el-table-column prop="fileHashId" min-width="300" label="文件哈希" align="center" sortable>
 				</el-table-column>
-				<el-table-column prop="version" label="版本"  sortable>
+				<el-table-column prop="version" label="版本" align="center" sortable>
 				</el-table-column>
-				<el-table-column prop="descript" label="描述" sortable>
+				<el-table-column prop="descript" label="描述" align="center" sortable>
 				</el-table-column>
 	
-        <el-table-column label="操作" width="150">
-				<template scope="scope">
+        <el-table-column label="操作" align="center">
+				<template slot-scope="scope">
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
 				</template>
 			</el-table-column>
@@ -153,46 +153,55 @@
 
   </el-tabs>
   <el-dialog title="" :visible.sync="dialogTableVisible"   customClass="customWidth">
-	  <div class="dialog_item_title">
-		  <el-col :span="9">
-			 <div class="item_title_text" style="width:100%">
+	  <div class="dialog_item_title" style="display:flex;">
+		
+			 <div class="item_title_text">
 				 	文件哈希：{{titleData.fileHashId}}
 			 </div>
-		  </el-col>
-		    <el-col :span="3">
+		  
+		  
 			 <div class="item_title_text">
 				 	大小:{{titleData.fileSize}}
 			 </div>
-		  </el-col>
-		    <el-col :span="5">
+		
+		    
 			  <div class="item_title_text">
 				 	上传时间： {{titleData.fileStoreTime}}
 			 </div>
-		  </el-col>
-		    <el-col :span="4">
+		  
+		   
 			  <div class="item_title_text">
 				 	总下载量： {{titleData.fileName}}
 			 </div>
-		  </el-col>
-		   <el-col :span="3">
+
+		  
 			  <div class="item_title_text">
 				<el-button type="primary" @click="backUp()">备份</el-button>
 				<el-button type="danger"   @click="deleteData()">删除</el-button>
 			 </div>
-		  </el-col>
+		 
 	  </div>
 	  <div class="dialog_item_table">
       <el-tabs v-model="activeNameXq" @tab-click="handleClick">
         <el-tab-pane label="备份数量" name="first">
             <el-col :span="24">
-              <div class="item_title_h1">
-                备份数量
-              </div>
+             
               <div class="item_title_child">
-                  <el-table :data="tableDataBf.slice((currentPageBf-1)*pagesizeBf,currentPageBf*pagesizeBf)">
-                    <el-table-column prop="storeNodeId" label="节点哈希" align="center" ></el-table-column>
-                    <el-table-column property="storeTimestamp" label="上传时间" align="center" ></el-table-column>
-                    <el-table-column property="nodeStoreUsage" label="节点空间" align="center"></el-table-column>
+                  <el-table :data="tableDataBf.slice((currentPageBf-1)*pagesizeBf,currentPageBf*pagesizeBf)" :border="true">
+                    
+                    <el-table-column prop="storeNodeId" label="节点哈希" align="center" min-width="300" sortable ></el-table-column>
+                    <el-table-column property="storeNodeRegionNum" label="分区" align="center" sortable></el-table-column>
+                    <el-table-column property="storeNodeGroupNum" label="分组" align="center" sortable></el-table-column>
+                    <el-table-column property="storeTimestamp" label="上传时间" align="center" min-width="200" sortable></el-table-column>
+                    <el-table-column property="storeType" label="存储类型" align="center" sortable></el-table-column>
+                    <el-table-column property="nodeType" label="节点类型" align="center" sortable></el-table-column>
+                    <el-table-column property="nodeStoreUsage" label="已占用/总空间" align="center" min-width="100" sortable></el-table-column>
+                    <el-table-column  label="操作" align="center" width="150">
+                      <template slot-scope="scope">
+                          <el-button size="small" @click="handleDetails(scope.$index, scope.row)">查看详情</el-button>
+
+                      </template>
+                    </el-table-column>
                   </el-table>
                   <el-pagination
                      @size-change="handleSizeChangeBf"
@@ -209,14 +218,12 @@
         </el-tab-pane>
         <el-tab-pane label="文件拥有者" name="second">
            <el-col :span="24">
-              <div class="item_title_h1">
-                文件拥有者
-              </div>
+             
               <div class="item_title_child">
-                  <el-table :data="tableDataYyz.slice((currentPageYyz-1)*pagesizeYyz,currentPageYyz*pagesizeYyz)">
-                    <el-table-column prop="owner" label="用户名" align="center" ></el-table-column>
-                    <el-table-column property="fileName" label="文件名" align="center" ></el-table-column>
-                    <el-table-column property="timestamp" label="上传时间" align="center"></el-table-column>
+                  <el-table :data="tableDataYyz.slice((currentPageYyz-1)*pagesizeYyz,currentPageYyz*pagesizeYyz)" :border="true">
+                    <el-table-column prop="owner" label="用户名" align="center" sortable ></el-table-column>
+                    <el-table-column property="fileName" label="文件名" align="center" sortable ></el-table-column>
+                    <el-table-column property="timestamp" label="上传时间" align="center" sortable></el-table-column>
                   </el-table>
                   <el-pagination
                     @size-change="handleSizeChangeYyz"
@@ -234,15 +241,13 @@
         </el-tab-pane>
         <el-tab-pane label="日志记录" name="third">
              <el-col :span="24">
-              <div class="item_title_h1">
-                日志记录
-              </div>
+             
               <div class="item_title_child">
-                  <el-table :data="tableDataRzjl.slice((currentPageRz-1)*pagesizeRz,currentPageRz*pagesizeRz)">
-                    <el-table-column prop="timestamp" label="时间" align="center" ></el-table-column>
-                    <el-table-column property="action" label="Action" align="center"  ></el-table-column>
-                    <el-table-column property="code" label="Code" align="center"></el-table-column>
-                    <el-table-column property="descript" label="描述" align="center"></el-table-column>
+                  <el-table :data="tableDataRzjl.slice((currentPageRz-1)*pagesizeRz,currentPageRz*pagesizeRz)" :border="true">
+                    <el-table-column prop="timestamp" label="时间" align="center" sortable ></el-table-column>
+                    <el-table-column property="action" label="Action" align="center" sortable  ></el-table-column>
+                    <el-table-column property="code" label="Code" align="center" sortable></el-table-column>
+                    <el-table-column property="descript" label="描述" align="center" sortable></el-table-column>
                   </el-table>
                   <el-pagination
                    @size-change="handleSizeChangeRz"
@@ -480,6 +485,12 @@ export default {
     this.getBlacklist();
   },
   methods: {
+
+    //备份数量查看详情
+    handleDetails(index,row){
+      this.$router.push({path:'/nodes',query: { tabActive: "second",nowStoreNodeId:row.storeNodeId }})
+    },
+    //黑名单批量上传
     submitUpload() {
       this.dialogAllCreateVisible = false;
       let list = document.getElementsByClassName(
@@ -502,12 +513,9 @@ export default {
       form.append("file", fileObj);
       uploadBlackListFile(form).then(res => {
         if (res.result == "ok") {
-          //  this.$message({
-          //    type:'success',
-          //    message:res.msg
-          //  })
           this.getNewBlacklist();
         } else {
+
         }
       });
     },
@@ -565,6 +573,11 @@ export default {
             type: "error"
           });
         }
+      }).catch(error => {
+        this.$message({
+          message: "网络出错，请重新请求",
+          type: "error"
+        });
       });
     },
     //查看详情备份
@@ -585,6 +598,11 @@ export default {
             type: "error"
           });
         }
+      }).catch(error => {
+        this.$message({
+          message: "网络出错，请重新请求",
+          type: "error"
+        });
       });
     },
 
@@ -605,6 +623,11 @@ export default {
             type: "error"
           });
         }
+      }).catch(error => {
+        this.$message({
+          message: "网络出错，请重新请求",
+          type: "error"
+        });
       });
     },
     //分页
@@ -682,6 +705,11 @@ export default {
           this.listLoading = false;
           this.tableData = res.data;
         }
+      }).catch(error => {
+        this.$message({
+          message: "网络出错，请重新请求",
+          type: "error"
+        });
       });
     },
 
@@ -696,6 +724,11 @@ export default {
           this.listLoading = false;
           this.tableDataBlacklist = res.data;
         }
+      }).catch(error => {
+        this.$message({
+          message: "网络出错，请重新请求",
+          type: "error"
+        });
       });
     },
 
@@ -717,6 +750,11 @@ export default {
           this.listLoading = false;
           this.tableDataBlacklist = res.data;
         }
+      }).catch(error => {
+        this.$message({
+          message: "网络出错，请重新请求",
+          type: "error"
+        });
       });
     },
     //删除
@@ -734,13 +772,13 @@ export default {
               this.getNewBlacklist();
             }
           });
-        })
-        .catch(() => {
-          this.$message({
-            message: msg,
-            type: "error"
-          });
+        }).catch(error => {
+        this.$message({
+          message: "网络出错，请重新请求",
+          type: "error"
         });
+      });
+      
     },
     //查看详情页面
     handleEdit: function(index, row) {
@@ -762,6 +800,11 @@ export default {
             type: "error"
           });
         }
+      }).catch(error => {
+        this.$message({
+          message: "网络出错，请重新请求",
+          type: "error"
+        });
       });
     },
 
@@ -773,7 +816,6 @@ export default {
     //文件查询
     onSubmit() {
       let param = this.findForm;
-      alert(JSON.stringify(param))
       this.listLoading = true;
       var timeStatus = this.common.checkTimes(param.startTime, param.endTime);
       if (timeStatus == false) {
@@ -793,6 +835,11 @@ export default {
             type: "error"
           });
         }
+      }).catch(error => {
+        this.$message({
+          message: "网络出错，请重新请求",
+          type: "error"
+        });
       });
     },
     //黑名单查询
@@ -810,6 +857,7 @@ export default {
       } else {
         
         param = this.blackListForm;
+        
           var timeStatus = this.common.checkTimes(param.startTime, param.endTime);
       if (timeStatus == false) {
         this.$message.error("结束时间必须大于起始时间");
@@ -831,6 +879,11 @@ export default {
             type: "error"
           });
         }
+      }).catch(error => {
+        this.$message({
+          message: "网络出错，请重新请求",
+          type: "error"
+        });
       });
     }
   }
@@ -855,12 +908,14 @@ export default {
   height: auto;
 }
 .item_title_text {
-  width: 80%;
+  width: auto;
   margin: 0 auto;
   height: 50px;
   background: #f2f2f2;
   line-height: 50px;
   text-align: center;
+  padding: 0px 30px;
+  border-radius: 3px;
 }
 .item_title_h1 {
   width: 90%;

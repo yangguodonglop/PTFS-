@@ -11,6 +11,14 @@ import Page6 from './views/nav3/Page6.vue'
 import index from './views/nav1/index.vue'
 import miningmachine from './views/nav1/miningmachine.vue'
 import income from './views/nav1/income.vue'
+import flexs from './views/nav1/flexs.vue'
+import firstChild from './views/nav1/firstChild.vue'
+import secondChild from './views/nav1/secondChild.vue'
+import fathers from './views/nav1/fathers.vue'
+
+
+
+
 
 
 
@@ -35,7 +43,8 @@ let routes = [
         iconCls: 'el-icon-message',//图标样式class
         children: [
             { path: '/main', component: Main, name: '主页', hidden: true },
-            { path: '/index', component: index, name: 'PTFS网络概览' },
+            { path: '/', component: index, name: 'PTFS网络概览', },
+            // { path: '/index', component: index, name: 'PTFS网络概览',},
             { path: '/nodes', component: nodes, name: 'PTFS节点管理' },
            
             { path: '/files', component: files, name: 'PTFS文件管理' },
@@ -43,6 +52,14 @@ let routes = [
             // { path: '/Page5', component: Page5, name: '消息队列/Kakfa管理' },
             { path: '/miningmachine', component: miningmachine, name: '矿机管理' },
             { path: '/income', component: income, name: '矿机收益管理' },
+            // { path: '/flexs', component: flexs, name: '弹性布局' },
+            // { path: '/firstChild', component: firstChild, name: '同级传值1' },
+            // { path: '/secondChild', component: secondChild, name: '同级传值2' },
+            // { path: '/fathers', component: fathers, name: '同级传值父级' },
+            
+            
+            
+            
             
             
 

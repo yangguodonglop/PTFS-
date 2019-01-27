@@ -1,12 +1,12 @@
-import babelpolyfill from 'babel-polyfill'
-import Vue from 'vue'
+//import babelpolyfill from 'babel-polyfill'
+//import Vue from 'vue'
 import App from './App'
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-default/index.css'
+//import ElementUI from 'element-ui'
+//import 'element-ui/lib/theme-default/index.css'
 //import './assets/theme/theme-green/index.css'
-import VueRouter from 'vue-router'
-import store from './vuex/store'
-import Vuex from 'vuex'
+//import VueRouter from 'vue-router'
+//import store from './vuex/store'
+//import Vuex from 'vuex'
 import VCharts from 'v-charts'
 import common from './common/js/util.js'
 Vue.prototype.common=common
@@ -15,22 +15,22 @@ Vue.prototype.common=common
 import routes from './routes'
 // import Mock from './mock'
 // Mock.bootstrap();
-import 'font-awesome/css/font-awesome.min.css'
+//import 'font-awesome/css/font-awesome.min.css'
 
-Vue.use(ElementUI)
-Vue.use(VueRouter)
-Vue.use(Vuex)
+//Vue.use(ElementUI)
+//Vue.use(VueRouter)
+//Vue.use(Vuex)
 Vue.use(VCharts)
 
-import axios from 'axios';
-import vuePopper from 'element-ui/lib/utils/vue-popper';
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-Vue.prototype.$axios = axios;
+//import axios from 'axios';
+//import vuePopper from 'element-ui/lib/utils/vue-popper';
+//axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+//Vue.prototype.$axios = axios;
 
 //NProgress.configure({ showSpinner: false });
 
 const router = new VueRouter({
-  routes
+ routes
 })
 
 // router.beforeEach((to, from, next) => {
@@ -54,7 +54,7 @@ new Vue({
   //el: '#app',
   //template: '<App/>',
   router,
-  store,
+  //store,
   //components: { App }
   render: h => h(App)
 }).$mount('#app')

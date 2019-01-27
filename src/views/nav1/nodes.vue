@@ -8,23 +8,26 @@
 						<div class="grid-content bg-purple new_grid-content">
 							<el-tabs v-model="activeName" @tab-click="handleClick">
 								<el-tab-pane label="节点分布" name="first">
-									<el-col :span="14">
+                  <div style="display: flex;justify-content: space-between;">
+                  <div>
                     <div class="div_MapDetails" v-if="MapDetailsShow">
             
                       <p  style=" width:200px;word-wrap:break-word;margin-top:20px;white-space: nowrap; overflow: hidden;text-overflow: ellipsis;">节点ID:{{details_minerId}}</p>
                       <p>节点类型:{{details_lx}}</p>
                       <p>节点所在地：{{details_city}}-{{details_region}}</p>
+                      <p>分区-分组：{{details_RgnGrpInfo}}</p>
                       <p style=" width:200px;word-wrap:break-word;margin-top:0px;white-space: nowrap; overflow: hidden;text-overflow: ellipsis;">节点IP：{{details_Ip}}</p>
                       <p>节点状态：{{details_nodeState}}</p>
+                       <p>存储量/总存空间：{{details_storeUsage}}/{{details_totalCap}}</p>
                        <p style="padding-bottom:30px">	<el-button type="primary" @click="getMoreDetails()">更多详情</el-button></p>
 
                     </div>
 									<div class="item_one_child" id="chartColumn">
-										<ve-map :data="chartData" width="800px" height="600px" ></ve-map>
+										<ve-map :data="chartData" width="740px" height="600px" ></ve-map>
 									</div>
                   <!-- <div id="chartColumn" style="width: 100%;height:800px;"></div> -->
-									</el-col>
-									<el-col :span="10">
+								</div>
+									
 									<div class="item_one_child_r">
 										<div class="child_r_t">
 												<el-checkbox-group v-model="checkList">
@@ -38,23 +41,14 @@
 										<div class="child_r_b" v-for="item in nodeTypeCount" :key="item.id">
 											{{item.nodeType}}：	{{item.nodeCount}}
 										</div>
-										<div class="child_r_table">
+										<div class="child_r_table" style="margin-top:30px;">
 											<el-table
-												:data="tableDataDetails.slice((currentPageJd-1)*pagesizeJd,currentPageJd*pagesizeJd)"
-                        @row-click="openDetails"
-                        >
-												<el-table-column
-													prop="nodeType"
-													label="类型"
-                          width="120"
-												>
-												</el-table-column>
-												<el-table-column
-													prop="nodeId"
-													label="节点ID"
-                          
-												>
-												</el-table-column>
+												:data="tableDataDetails.slice((currentPageJd-1)*pagesizeJd,currentPageJd*pagesizeJd)" @row-click="openDetails" :border="true" @sort-change="tabDataChange">
+												<el-table-column prop="nodeType" label="类型" width="110" align="center" sortable>	</el-table-column>
+												<el-table-column	prop="nodeId"	label="节点ID" min-width="300" align="center" sortable>	</el-table-column>
+												<el-table-column	prop="backUpUsage"	label="备份已占用" align="center" min-width="90" sortable >	</el-table-column>
+												<el-table-column	prop="cacheUsage"	label="缓存已占用" align="center" min-width="90" sortable>	</el-table-column>
+												<el-table-column	prop="totalUsage"	label="占用总空间" align="center" min-width="90" :formatter="formatSex" sortable>	</el-table-column>
 											</el-table>
 											  <el-pagination
                    @size-change="handleSizeChangeJd"
@@ -68,7 +62,35 @@
                   </el-pagination>
 										</div>
 									</div>
-									</el-col>
+                  </div>
+									
+								</el-tab-pane>
+                <el-tab-pane label="分区/分组" name="four">
+									<div class="item_three_table">
+										 <el-table :data="tableGroupInfo.slice((currentPagePz-1)*pagesizePz,currentPagePz*pagesizePz)" :border="true" style="width: 100%">
+                        <el-table-column type="index" align="center" ></el-table-column>
+												<el-table-column prop="nodeType" align="center" sortable label="类型" > </el-table-column>
+												<el-table-column prop="nodeHashId" align="center" sortable label="哈希" min-width="400">	</el-table-column>
+												<el-table-column	prop="minerCnt" align="center" sortable		label="分区号">	</el-table-column>
+                        <el-table-column	prop="groupCnt" align="center" sortable	label="组数">
+                            <template slot-scope="scope">
+                                <div style="cursor: pointer;color:blue;" @click="groupInfoMore(scope.row)">{{scope.row.groupCnt}}</div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="regionNum" align="center" sortable label="矿机总数"></el-table-column>
+                       
+											</el-table>
+											<el-pagination
+                             @size-change="handleSizeChangePz"
+                            @current-change="handleCurrentChangePz"
+                            :current-page="currentPagePz"
+                            :page-sizes="[5, 10, 20]" 
+                            :page-size="pagesizePz"        
+                            layout="total, sizes, prev, pager, next, jumper"
+                            style="float:right"
+                            :total="tableDataNodeConfig.length">    
+                  </el-pagination>
+									</div>
 								</el-tab-pane>
 								<el-tab-pane label="节点查询" name="second">
 									<div class="item_two_child">
@@ -85,13 +107,15 @@
 												 <p>节点ID:<span style=" width:200px;word-wrap:break-word;margin-top:20px;white-space: nowrap; overflow: hidden;text-overflow: ellipsis;">{{details_minerId}}</span></p>
                       <p>节点类型:{{details_lx}}</p>
                       <p>节点所在地：{{details_city}}-{{details_region}}</p>
+                      <p>分区-分组：{{details_RgnGrpInfo}}</p>
                       <p >节点IP：<span style=" width:200px;word-wrap:break-word;margin-top:0px;white-space: nowrap; overflow: hidden;text-overflow: ellipsis;">{{details_Ip}}</span></p>
                       <p>节点状态：{{details_nodeState}}</p>
+                       <p>存储量/总存空间：{{details_storeUsage}}/{{details_totalCap}}</p>
                        <p style="padding-bottom:30px">	<el-button type="primary" @click="getMoreDetails()">更多详情</el-button></p>
 										</div>
 									</div>
 								</el-tab-pane>
-								<el-tab-pane label="更新节点配置" name="fourth">
+								<el-tab-pane label="更新节点配置" name="three">
                  
 									<div class="item_three_child">
 										<div class="three_child_button">
@@ -100,51 +124,22 @@
 										</div>
 									</div>
                   <div class="item_three_table">
-                      <el-table
-												:data="tableDataNodeConfig.slice((currentPagePz-1)*pagesizePz,currentPagePz*pagesizePz)"
-												style="width: 100%">
-                        <el-table-column
-                         type="index">
-                         </el-table-column>
-												<el-table-column
-													prop="timeStamp"
-													label="时间">
-												</el-table-column>
-												<el-table-column
-													prop="msgId"
-													label="命令编号">
-												</el-table-column>
-												<el-table-column
-													prop="commandTargetId"
-													label="目标节点">
-												</el-table-column>
-                        <el-table-column
-													prop="commandExecResult"
-													label="执行结果">
-												</el-table-column>
-                        <el-table-column
-													prop="commandExecData"
-													label="命令附件参数">
-                          
-												</el-table-column>
-                     
-                      
-                        <el-table-column
-													prop="descript"
-													label="描述">
-                         
-												</el-table-column>
-                           <el-table-column
-													label="操作">
+                      <el-table :data="tableDataNodeConfig.slice((currentPagePz-1)*pagesizePz,currentPagePz*pagesizePz)" :border="true" style="width: 100%">
+                        <el-table-column type="index" align="center" ></el-table-column>
+												<el-table-column prop="timeStamp" align="center" sortable label="时间" > </el-table-column>
+												<el-table-column prop="msgId" align="center" sortable label="命令编号">	</el-table-column>
+												<el-table-column	prop="commandTargetId" align="center" sortable		label="目标节点">	</el-table-column>
+                        <el-table-column	prop="commandExecResult" align="center" sortable	label="执行结果"></el-table-column>
+                        <el-table-column prop="commandExecData" align="center" sortable label="命令附件参数"></el-table-column>
+                        <el-table-column		prop="descript"   align="center"   sortable		label="描述"> 	</el-table-column>
+                         <el-table-column  align="center"	label="操作">
                             <template slot-scope="scope">
                                 <el-button  type="text" size="small" @click.native="downLoadFile(scope.row)">下载</el-button>
-                               
                             </template>
-                          
 												</el-table-column>
 											</el-table>
-											  <el-pagination
-                   @size-change="handleSizeChangePz"
+											<el-pagination
+                             @size-change="handleSizeChangePz"
                             @current-change="handleCurrentChangePz"
                             :current-page="currentPagePz"
                             :page-sizes="[5, 10, 20]" 
@@ -162,40 +157,64 @@
 					<!-- <el-col :span="6"><div class="grid-content bg-purple-light">2</div></el-col> -->
 				</el-row>
 		</el-col>
+
+    <!-- 节点更多详情弹窗  -->
   <el-dialog title="" :visible.sync="dialogTableVisible"  id="el-dialog-new" customClass="customWidth">
 	 
-	  <div class="dialog_item_table">
-		   <el-col :span="24">
-			<div class="item_title_h1">
-				节点存储文件列表
-			</div>
-			 <div class="item_title_child">
-				 	<el-table :data="tableDataMoreDetails.slice((currentPageCc-1)*pagesizeCc,currentPageCc*pagesizeCc)">
-             <el-table-column type="index">
-				</el-table-column>
-						<el-table-column prop="fileName" label="文件名" ></el-table-column>
-						<el-table-column property="fileSize" label="文件大小" ></el-table-column>
-						<el-table-column property="fileCreateTime" label="上传时间"></el-table-column>
-            <el-table-column property="fileHashId" label="文件哈希"></el-table-column>
-					</el-table>
-					<el-pagination
-						@size-change="handleSizeChangeCc"
-                            @current-change="handleCurrentChangeCc"
-                            :current-page="currentPageCc"
-                            :page-sizes="[5, 10, 20]" 
-                            :page-size="pagesizeCc"        
-                            layout="total, sizes, prev, pager, next, jumper"
-                            style="float:right"
-                            :total="tableDataMoreDetails.length">  
-					</el-pagination>
-			 </div>
-		  </el-col>
-
-		
+	  <div class="dialog_item_table" style="margin-top:0px">
+      <el-tabs v-model="activeNameTab" @tab-click="handleClick">
+          <el-tab-pane label="备份文件列表" name="firstBackUp">
+           <el-col :span="24">
+            <div class="item_title_child" style="text-align:left;">
+                <el-table :data="tableDataMoreDetailsBackUp.slice((currentPageBackUp-1)*pagesizeBackUp,currentPageBackUp*pagesizeBackUp)" :border="true">
+                  <el-table-column type="index" align="center" sortable></el-table-column>
+                  <el-table-column prop="fileName" label="文件名" align="center" sortable ></el-table-column>
+                  <el-table-column property="fileSize" label="文件大小" align="center" sortable></el-table-column>
+                  <el-table-column property="fileCreateTime" label="上传时间" align="center" sortable></el-table-column>
+                  <el-table-column property="fileHashId" label="文件哈希" align="center" min-width="350" sortable></el-table-column>
+                </el-table>
+                <el-pagination
+                  @size-change="handleSizeChangeBackUp"
+                                  @current-change="handleCurrentChangeBackUp"
+                                  :current-page="currentPageBackUp"
+                                  :page-sizes="[5, 10, 20]" 
+                                  :page-size="pagesizeBackUp"        
+                                  layout="total, sizes, prev, pager, next, jumper"
+                                  style="float:right"
+                                  :total="tableDataMoreDetailsBackUp.length">  
+                </el-pagination>
+            </div>
+            </el-col>
+          </el-tab-pane>
+          <el-tab-pane label="缓存文件列表" name="secondCache">
+              <el-col :span="24">
+                  <div class="item_title_child" style="text-align:left;">
+                      <el-table :data="tableDataMoreDetailsCache.slice((currentPageCache-1)*pagesizeCache,currentPageCache*pagesizeCache)" :border="true">
+                        <el-table-column type="index" align="center" sortable></el-table-column>
+                        <el-table-column prop="fileName" label="文件名" align="center" sortable ></el-table-column>
+                        <el-table-column property="fileSize" label="文件大小" align="center" sortable></el-table-column>
+                        <el-table-column property="fileCreateTime" label="上传时间" align="center" sortable></el-table-column>
+                        <el-table-column property="fileHashId" label="文件哈希" align="center" min-width="350" sortable></el-table-column>
+                      </el-table>
+                      <el-pagination
+                        @size-change="handleSizeChangeCache"
+                                        @current-change="handleCurrentChangeCache"
+                                        :current-page="currentPageCache"
+                                        :page-sizes="[5, 10, 20]" 
+                                        :page-size="pagesizeCc1"        
+                                        layout="total, sizes, prev, pager, next, jumper"
+                                        style="float:right"
+                                        :total="tableDataMoreDetailsCache.length">  
+                      </el-pagination>
+                  </div>
+                  </el-col>
+          </el-tab-pane>
+  </el-tabs>
 	  </div>
 	
 </el-dialog>
 
+<!-- 更新节点配置新增弹窗 -->
  <el-dialog title="" :visible.sync="dialogCreateVisible"   customClass="customWidth1">
 	   <div class="dialog_item_title">
 		  <el-col :span="24">
@@ -215,7 +234,6 @@
                     name="configFile"
                     :before-upload="beforeAvatarUpload" 
                     action=""
-                    
                     :file-list="fileList"
                     :http-request="uploadSectionFile"
                     :auto-upload="false">
@@ -226,7 +244,6 @@
               </div>
               </el-col>
               </div>
-                
            </el-col>
             <el-col :span="24">
               <div style="width:80%;margin:0 auto;">
@@ -239,9 +256,7 @@
               </div>
               </el-col>
               </div>
-                
            </el-col>
-          
         <el-col :span="24">
           <div style="width:60px; margin:20px auto;">
 				<el-form-item>
@@ -249,12 +264,48 @@
 				</el-form-item>
         </div>
           </el-col>
-          
 			</el-form>
-      
 			 </div>
 		 </el-col>
 	  </div> 
+</el-dialog>
+
+<!-- 分组详情弹窗  -->
+  <el-dialog title="" :visible.sync="dialogGroupInfoVisible"  id="el-dialog-new" customClass="customWidth">
+	 
+	  <div class="dialog_item_table" style="margin-top:0px">
+      <el-tabs v-model="activeNameTab" @tab-click="handleClick">
+          <el-tab-pane label="分组详情" name="firstBackUp">
+           <el-col :span="24">
+            <div class="item_title_child" style="text-align:left;">
+                <el-table :data="tableQueryGroupInfo.slice((currentPageGroup-1)*pagesizeGroup,currentPageGroup*pagesizeGroup)" :border="true">
+                  <el-table-column type="index"  align="center" sortable></el-table-column>
+                  <el-table-column prop="groupNum" label="分组号" align="center" sortable  ></el-table-column>
+                  <el-table-column property="nodeHash" label="矿机哈希" align="center" sortable min-width="500"></el-table-column>
+                  <el-table-column  label="操作" align="center" >
+                      <template slot-scope="scope">
+                          <el-button size="small" @click="groupInfoLink(scope.row)">查看详情</el-button>
+                      </template>
+                  </el-table-column>
+
+                </el-table>
+                
+                <el-pagination
+                  @size-change="handleSizeChangeGroup"
+                                  @current-change="handleCurrentChangeGroup"
+                                  :current-page="currentPageGroup"
+                                  :page-sizes="[5, 10, 20]" 
+                                  :page-size="pagesizeGroup"        
+                                  layout="total, sizes, prev, pager, next, jumper"
+                                  style="float:right"
+                                  :total="queryGroupInfoLength">  
+                </el-pagination>
+            </div>
+            </el-col>
+          </el-tab-pane>
+  </el-tabs>
+	  </div>
+	
 </el-dialog>
 
 
@@ -266,8 +317,9 @@
 <script>
 //import util from "../../common/js/util";
 
-import newUrl from "../../api/api";
+import newUrl, { deleteFileList } from "../../api/api";
 
+//import echarts from "echarts";
 import echarts from "echarts";
 //import NProgress from 'nprogress'
 import {
@@ -278,13 +330,17 @@ import {
   queryAllConfigRecords,
   updateNodeConfig,
   uploadBlackListFile,
-  queryAllNodeProfiesByNodeTypes
+  queryAllNodeProfiesByNodeTypes,
+  queryRegionGroupInfo,
+  queryGroupInfo
 } from "../../api/api";
+import { error } from 'util';
 
 export default {
   data() {
     return {
-      newUrl: newUrl.customData(),//获取服务器 或则本地请求base
+      // totalUsasgeArr:[],
+      newUrl: newUrl.customData(), //获取服务器 或则本地请求base
       nodeTypeCount: [],
       descript: "6",
       fileList: [],
@@ -292,11 +348,18 @@ export default {
       pagesizeJd: 10, //    每页的数据
       currentPagePz: 1, //初始页
       pagesizePz: 10, //    每页的数据
-      currentPageCc: 1, //初始页
-      pagesizeCc: 10, //    每页的数据
+      currentPageBackUp: 1, //初始页
+      pagesizeBackUp: 10, //    每页的数据
+       currentPageGroup: 1, //初始页
+      pagesizeGroup: 10, //    每页的数据
+      
+      currentPageCache: 1, //初始页
+      pagesizeCache: 10, //    每页的数据
+
       tableData1: [],
       tableData: [],
       tableDataNodeConfig: [],
+      tableGroupInfo: [],
       chartEvents: "",
       testarray: [
         {
@@ -318,7 +381,9 @@ export default {
       ],
       dialogTableVisible: false,
       dialogCreateVisible: false,
+      dialogGroupInfoVisible:false,
       activeName: "first",
+      activeNameTab: "firstBackUp",
       MapDetailsShow: false,
       chartColumn: null,
       details_gl: "",
@@ -332,25 +397,10 @@ export default {
       details_city: "",
       details_region: "",
       input_nodeId: "",
+      details_RgnGrpInfo: "",
+      details_storeUsage: "",
+      details_totalCap: "",
       downLoadfileName: "",
-
-      form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: "",
-        newvalue1: "",
-        newvalue2: "",
-        newvalue3: "",
-        newvalue4: "",
-        newvalue5: ""
-      },
-
-      //   activeNames: ["1"],
       input: "请输入",
       chartData: {
         columns: [],
@@ -359,19 +409,149 @@ export default {
           // { 位置: "北京", 超级管理员: 555551, 超级储存节点: 444441,应用层节点:8888881,矿工节点:66666661}
         ]
       },
-      checkList: ["位置", "超级管理节点"],
+      checkList: ["位置", ""],
       tableDataDetails: [],
-      tableDataMoreDetails: []
+      tableDataMoreDetailsBackUp: [],
+      tableDataMoreDetailsCache: [],
+      tableQueryGroupInfo:[],
+      queryGroupInfoLength:''
     };
   },
   mounted() {
+    //判断从备份数量查看详情传递过来的
+    if (this.$route.query.tabActive == undefined) {
+      this.activeName = "first";
+    } else {
+      this.activeName = this.$route.query.tabActive;
+      this.input_nodeId = this.$route.query.nowStoreNodeId;
+    }
+
+    //获取分区分组信息
+    this.getGroupInfo();
     // 获取节点分布列表
-    this.getDetails();
+    //this.getDetails();
     //获取节点配置列表
     this.getNodeslist();
     this.chartData.columns = this.checkList;
   },
   methods: {
+    //
+    //将字节大小转化成GB/KB/KB/
+    formatSex: function(row, column) {
+      //alert(JSON.stringify(row));
+      var limit = row.totalUsage;
+      // return (row.totalUsage = "转化");
+      var size = "";
+      if (limit < 0.1 * 1024) {
+        //小于0.1KB，则转化成B
+        size = limit.toFixed(2) + "B";
+      } else if (limit < 0.1 * 1024 * 1024) {
+        //小于0.1MB，则转化成KB
+        size = (limit / 1024).toFixed(2) + "KB";
+      } else if (limit < 0.1 * 1024 * 1024 * 1024) {
+        //小于0.1GB，则转化成MB
+        size = (limit / (1024 * 1024)).toFixed(2) + "MB";
+      } else {
+        //其他转化成GB
+        size = (limit / (1024 * 1024 * 1024)).toFixed(2) + "GB";
+      }
+
+      var sizeStr = size + ""; //转成字符串
+      var index = sizeStr.indexOf("."); //获取小数点处的索引
+      var dou = sizeStr.substr(index + 1, 2); //获取小数点后两位的值
+      if (dou == "00") {
+        //判断后两位是否为00，如果是则删除00
+        return sizeStr.substring(0, index) + sizeStr.substr(index + 3, 2);
+      }
+      return size;
+    },
+    // my_desc_sort(a, b) {
+    //   if (a.totalUsage > b.totalUsage) {
+    //     return -1;
+    //   } else if (a.totalUsage < b.totalUsage) {
+    //     return 1;
+    //   } else {
+    //     return 0;
+    //   }
+    // },
+    my_desc_sort(a, b) {
+      if (a > b) {
+        return -1;
+      } else if (a < b) {
+        return 1;
+      } else {
+        return 0;
+      }
+    },
+    my_asc_sort(a, b) {
+      if (a < b) {
+        return -1;
+      } else if (a > b) {
+        return 1;
+      } else {
+        return 0;
+      }
+    },
+    //排序改变时触发函数
+    // tabDataChange(column) {
+    //   //this.currentPageJd = 1 // return to the first page after sorting
+    //   if (column.prop === "totalUsage") {
+    //     if (column.order === "descending") {
+    //       for(var i = 0 ; i < this.tableDataDetails.length; i ++){
+    //           totalUsasgeArr.push(this.tableDataDetails[i].totalUsage);
+    //       }
+
+    //       // this.tableDataDetails = this.tableDataDetails.sort(this.my_desc_sort);
+    //       debugger;
+    //     } else if (column.order === "ascending") {
+    //       this.tableDataDetails = this.tableDataDetails.sort(this.my_asc_sort);
+    //       debugger;
+    //     }
+    //   } else if (column.prop === "col_2") {
+    //     // ... ...
+    //   }
+    //   //this.showed_data = this.filtered_data.slice(0, this.page_size) // show only one page
+    // },
+    tabDataChange(column) {
+
+      if (column.order === "descending") {
+        console.log(this.tableDataDetails)
+        var totalUsasgeArr = [];
+        for (var i = 0; i < this.tableDataDetails.length; i++) {
+          totalUsasgeArr.push(this.tableDataDetails[i][column.prop]);
+        }
+        totalUsasgeArr = totalUsasgeArr.sort(this.my_desc_sort);
+        for (var i = 0; i < this.tableDataDetails.length; i++) {
+          // this.tableDataDetails[i].totalUsage = totalUsasgeArr[i];
+          this.tableDataDetails[i][column.prop] = totalUsasgeArr[i];
+         
+        }
+         console.log(this.tableDataDetails)
+        // this.tableDataDetails = this.totalUsasgeArr.sort(this.my_desc_sort);
+      }
+      else if (column.order === "ascending") {
+         alert("升序")
+         var totalUsasgeArr = [];
+        for (var i = 0; i < this.tableDataDetails.length; i++) {
+          totalUsasgeArr.push(this.tableDataDetails[i][column.prop]);
+        }
+        totalUsasgeArr = totalUsasgeArr.sort(this.my_asc_sort);
+        for (var i = 0; i < this.tableDataDetails.length; i++) {
+          // this.tableDataDetails[i].totalUsage = totalUsasgeArr[i];
+          this.tableDataDetails[i][column.prop] = totalUsasgeArr[i];
+        }
+      }
+      
+      // this.handleCurrentChangeJd(2)
+      // this.handleCurrentChangeJd(1)
+  
+
+      //this.showed_data = this.filtered_data.slice(0, this.page_size) // show only one page
+    },
+    //排序改变时触发函数
+    // tabDataChange( column, prop, order ){
+    //   alert(JSON.stringify(column))
+    // },
     getNodesNewDetails() {
       // alert(JSON.stringify(this.chartData.rows));
       // this.chartData.rows = [{ 位置: "湖北", 税收: 888, 人口: 888, 面积: 666 }];
@@ -411,16 +591,23 @@ export default {
       // 文件对象
       form.append("file", fileObj);
       form.append("setConfigDescript", this.descript);
-      updateNodeConfig(form).then(res => {
-        if (res.result == "success") {
+      updateNodeConfig(form)
+        .then(res => {
+          if (res.result == "success") {
+            this.$message({
+              type: "success",
+              message: res.msg
+            });
+            this.getNodeslist();
+          } else {
+          }
+        })
+        .catch(error => {
           this.$message({
-            type: "success",
-            message: res.msg
+            message: "网络出错，请重新请求",
+            type: "error"
           });
-          this.getNodeslist();
-        } else {
-        }
-      });
+        });
     },
     //c上传前验证
     beforeAvatarUpload(file) {
@@ -466,18 +653,28 @@ export default {
         NodeId: this.input_nodeId
       };
       this.listLoading = true;
-      queryNodeInfoById(param).then(res => {
-        let { result, msg, data } = res;
-        if ((result = "ok")) {
-          this.listLoading = false;
-          this.details_lx = res.data.nodeType;
-          this.details_minerId = res.data.minerId;
-          this.details_Ip = res.data.ip;
-          this.details_nodeState = res.data.nodeState;
-          this.details_city = res.data.city;
-          this.details_region = res.data.region;
-        }
-      });
+      queryNodeInfoById(param)
+        .then(res => {
+          let { result, msg, data } = res;
+          if ((result = "ok")) {
+            this.listLoading = false;
+            this.details_lx = res.data.nodeType;
+            this.details_minerId = res.data.minerId;
+            this.details_Ip = res.data.ip;
+            this.details_nodeState = res.data.nodeState;
+            this.details_city = res.data.city;
+            this.details_region = res.data.region;
+            this.details_RgnGrpInfo = res.data.RgnGrpInfo;
+            this.details_storeUsage = res.data.storeUsage;
+            this.details_totalCap = res.data.totalCap;
+          }
+        })
+        .catch(error => {
+          this.$message({
+            message: "网络出错，请重新请求",
+            type: "error"
+          });
+        });
     },
 
     //获取更多详情
@@ -487,13 +684,21 @@ export default {
         Nodeid: this.details_minerId
       };
       this.listLoading = true;
-      queryNodeStoredFileListByNodeId(param).then(res => {
-        let { result, msg, data } = res;
-        if ((result = "ok")) {
-          this.listLoading = false;
-          this.tableDataMoreDetails = res.data;
-        }
-      });
+      queryNodeStoredFileListByNodeId(param)
+        .then(res => {
+          let { result, msg, data } = res;
+          if ((result = "ok")) {
+            this.listLoading = false;
+            this.tableDataMoreDetailsBackUp = res.data.backUpFileList;
+            this.tableDataMoreDetailsCache = res.data.cacheFileList;
+          }
+        })
+        .catch(error => {
+          this.$message({
+            message: "网络出错，请重新请求",
+            type: "error"
+          });
+        });
     },
     //分页
     handleCurrentChangeJd: function(currentPage) {
@@ -512,16 +717,34 @@ export default {
       this.pagesizePz = size; //每页下拉显示数据
     },
     //分页
-    handleCurrentChangeCc: function(currentPage) {
-      this.currentPageCc = currentPage; //点击第几页
+    handleCurrentChangeBackUp: function(currentPage) {
+      this.currentPageBackUp = currentPage; //点击第几页
+    },
+
+    //改变下拉分页
+    handleSizeChangeBackUp: function(size) {
+      this.pagesizeBackUp = size; //每页下拉显示数据
+    },
+     //分页
+    handleCurrentChangeGroup: function(currentPage) {
+      this.currentPageGroup = currentPage; //点击第几页
+    },
+
+    //改变下拉分页
+    handleSizeChangeGroup: function(size) {
+      this.pagesizeGroup = size; //每页下拉显示数据
+    },
+    //分页
+    handleCurrentChangeCache: function(currentPage) {
+      this.currentPageCache = currentPage; //点击第几页
     },
     //改变下拉分页
-    handleSizeChangeCc: function(size) {
-      this.pagesizeCc = size; //每页下拉显示数据
+    handleSizeChangeCache: function(size) {
+      this.pagesizeCache = size; //每页下拉显示数据
     },
 
     //选择节点发生改变是。checklist发生改变
-    handleCheckedChange: function(val) { 
+    handleCheckedChange: function(val) {
       this.chartData.columns = this.checkList;
     },
 
@@ -534,7 +757,7 @@ export default {
       this.dialogTableVisible = true;
     },
     handleClick(tab, event) {
-      console.log(tab, event);
+      // console.log(tab, event);
     },
     //点击表格获取每一行数据
     openDetails(row) {
@@ -543,37 +766,52 @@ export default {
         NodeId: row.nodeId
       };
       this.listLoading = true;
-      queryNodeInfoById(param).then(res => {
-        let { result, msg, data } = res;
-        if ((result = "ok")) {
-          this.listLoading = false;
-          this.details_lx = res.data.nodeType;
-          this.details_minerId = res.data.minerId;
-          this.details_Ip = res.data.ip;
-          this.details_nodeState = res.data.nodeState;
-          this.details_city = res.data.city;
-          this.details_region = res.data.region;
-        }
-      });
+      queryNodeInfoById(param)
+        .then(res => {
+          let { result, msg, data } = res;
+          if ((result = "ok")) {
+            this.listLoading = false;
+            this.details_lx = res.data.nodeType;
+            this.details_minerId = res.data.minerId;
+            this.details_Ip = res.data.ip;
+            this.details_nodeState = res.data.nodeState;
+            this.details_city = res.data.city;
+            this.details_region = res.data.region;
+            this.details_RgnGrpInfo = res.data.RgnGrpInfo;
+            this.details_storeUsage = res.data.storeUsage;
+            this.details_totalCap = res.data.totalCap;
+          }
+        })
+        .catch(error => {
+          this.$message({
+            message: "网络出错，请重新请求",
+            type: "error"
+          });
+        });
     },
     //获取节点详细信息
     getDetails() {
-      // let param = {
-      //   CityName: "1个",
-      //   NodeType: "矿机节点"
-      // };
-      //alert(this.checkList)
       var nowparam = this.checkList.slice(1, this.checkList.length);
+      for (var i = 0; i < nowparam.length; i++) {
+        if (
+          nowparam[i] == "" ||
+          nowparam[i] == null ||
+          typeof nowparam[i] == undefined
+        ) {
+          nowparam.splice(i, 1);
+          i = i - 1;
+        }
+      }
       if (nowparam.length == 0) {
         this.$message({
-          message: "请选择选择一种节点类型",
+          message: "请至少选择一种节点类型",
           type: "warning"
         });
+        return false;
       }
       let param = {
         nodeTypeArr: nowparam
       };
-      // alert(JSON.stringify(param))
       this.listLoading = true;
       queryAllNodeProfiesByNodeTypes(param).then(res => {
         let { result, msg, data } = res;
@@ -590,15 +828,69 @@ export default {
       let param = {};
       this.listLoading = true;
       //NProgress.start();
-      queryAllConfigRecords(param).then(res => {
-        let { result, msg, data } = res;
-        if ((result = "success")) {
-          this.listLoading = false;
-          this.tableDataNodeConfig = res.data;
-          this.details_length = res.data.length;
-        }
-      });
-    }
+      queryAllConfigRecords(param)
+        .then(res => {
+          let { result, msg, data } = res;
+          if ((result = "success")) {
+            this.listLoading = false;
+            this.tableDataNodeConfig = res.data;
+            this.details_length = res.data.length;
+          }
+        })
+        .catch(error => {
+          this.$message({
+            message: "网络出错，请重新请求",
+            type: "error"
+          });
+        });
+    },
+    //分区分组展示信息
+    getGroupInfo() {
+      let param = {};
+      queryRegionGroupInfo(param).then(res => {
+          let { result, msg, data } = res;
+          if ((result = "ok")) {
+            // this.listLoading = false;
+            this.tableGroupInfo = res.data;
+            // this.details_length = res.data.length;
+          }
+        })
+        .catch(error => {
+          this.$message({
+            message: "网络出错，请重新请求",
+            type: "error"
+          });
+        });
+    },
+    //点击组数查看详情
+    groupInfoMore(row) {
+      //alert(JSON.stringify(row))
+      let param={}
+      param.regionNum=row.regionNum
+      this.dialogGroupInfoVisible=true
+      queryGroupInfo(param).then(res => {
+          let { result, msg, data } = res;
+          if ((result = "ok")) {
+            // this.listLoading = false;
+            this.tableQueryGroupInfo = res.data;
+             this.queryGroupInfoLength = res.data.length;
+          }
+        })
+        .catch(error => {
+          this.$message({
+            message: "网络出错，请重新请求",
+            type: "error"
+          });
+        });
+      
+    },
+    //查看详情跳转
+    groupInfoLink(row){
+        this.dialogGroupInfoVisible=false
+        this.activeName="second"
+        this.input_nodeId=row.nodeHash
+    },
+    
   }
 };
 </script>
@@ -607,8 +899,7 @@ export default {
 .chart-container {
   // width: 100%;
   float: initial !important;
-  min-width: 1450px;
-
+  min-width: 1920px;
 }
 .new_grid-content {
   height: auto;
@@ -657,7 +948,7 @@ export default {
   }
 }
 .new_grid-content .item_one_child {
-  width: 800px;
+  width: 740px;
   height: 600px;
   //background: #666666;
   margin: 50px auto;
@@ -718,12 +1009,19 @@ export default {
       }
     }
     .item-bottom {
+      
       width: 500px;
       height: auto;
       margin-top: 50px;
       margin: 100px auto;
       background: #e4e8f1;
       padding-top: 15px;
+      background-image: linear-gradient(-53deg, #3d5bd9 0%, #71a2e0 100%),
+        linear-gradient(#ffffff, #ffffff);
+      background-blend-mode: normal, normal;
+      box-shadow: 3px 0px 7px 0px rgba(0, 0, 0, 0.12);
+      border-radius: 4px;
+      color: #ffffff;
 
       p {
         width: 100%;
@@ -739,7 +1037,7 @@ export default {
   height: auto;
 }
 .item_title_text {
-  width: 80%;
+  width: auto;
   margin: 0 auto;
   height: 50px;
   background: #f2f2f2;
@@ -771,13 +1069,19 @@ export default {
   width: 80%;
 }
 .div_MapDetails {
-  width: 200px;
-  height: 250px;
+  width: 230px;
+  height: auto;
   background: #999999;
   position: absolute;
   top: 100px;
   z-index: 1;
-  border-radius: 5px;
+  background-image: linear-gradient(-53deg, #3d5bd9 0%, #71a2e0 100%),
+    linear-gradient(#ffffff, #ffffff);
+  background-blend-mode: normal, normal;
+  box-shadow: 3px 0px 7px 0px rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  opacity: 0.6;
+  color: #ffffff;
   p {
     text-indent: 10px;
   }

@@ -36,7 +36,9 @@
                             type="datetime"
                             placeholder="选择日期时间"
                             @change="getSTimeOnlinestrat"
-						     format="yyyy-MM-dd HH:mm">
+                            value-format="yyyy-MM-dd HH:mm"
+						     >
+                 
                          </el-date-picker>
                     </div>
                      <div class="item_end" style="">
@@ -46,7 +48,7 @@
                             type="datetime"
                             placeholder="选择日期"
                               @change="getSTimeOnlineend"
-						     format="yyyy-MM-dd HH:mm">
+						           value-format="yyyy-MM-dd HH:mm">
                             >
                          </el-date-picker>
                     </div>
@@ -64,7 +66,7 @@
                             v-model="valueDevStorestart"
                             type="datetime"
                              @change="getSTimeDevStorestart"
-						     format="yyyy-MM-dd HH:mm"
+						     value-format="yyyy-MM-dd HH:mm"
                             placeholder="选择日期">
                          </el-date-picker>
                     </div>
@@ -74,7 +76,7 @@
                             v-model="valueDevStoreend"
                             type="datetime"
                                @change="getSTimeDevStoreend"
-						     format="yyyy-MM-dd HH:mm"
+						     value-format="yyyy-MM-dd HH:mm"
                             placeholder="选择日期">
                          </el-date-picker>
                     </div>
@@ -92,7 +94,7 @@
                             v-model="valueUsagestart"
                             type="datetime"
                                @change="getSTimeUsagestart"
-						     format="yyyy-MM-dd HH:mm"
+						     value-format="yyyy-MM-dd HH:mm"
                             placeholder="选择日期">
                          </el-date-picker>
                     </div>
@@ -102,7 +104,7 @@
                             v-model="valueUsageend"
                             type="datetime"
                                @change="getSTimeUsageend"
-						     format="yyyy-MM-dd HH:mm"
+						     value-format="yyyy-MM-dd HH:mm"
                             placeholder="选择日期">
                          </el-date-picker>
                     </div>
@@ -120,7 +122,7 @@
                             v-model="valueFilestart"
                              type="datetime"
                                @change="getSTimeFilestart"
-						     format="yyyy-MM-dd HH:mm"
+						     value-format="yyyy-MM-dd HH:mm"
                             placeholder="选择日期">
                          </el-date-picker>
                     </div>
@@ -130,7 +132,7 @@
                             v-model="valueFileend"
                              type="datetime"
                                @change="getSTimeFileend"
-						     format="yyyy-MM-dd HH:mm"
+						     value-format="yyyy-MM-dd HH:mm"
                             placeholder="选择日期">
                          </el-date-picker>
                     </div>
@@ -150,6 +152,7 @@
 <script>
 import echarts from "echarts";
 import axios from "axios";
+import common from "../../common/js/util.js";
 import "axios";
 import {
   queryOnlineNodeHistgraphs,
@@ -158,6 +161,7 @@ import {
   queryDevStoreHistgraph,
   queryFileCntHistgraph
 } from "../../api/api";
+import { error } from "util";
 export default {
   data() {
     return {
@@ -190,23 +194,21 @@ export default {
     };
   },
   mounted: function() {
-
     //获取当前时间
     let nowDate = new Date();
     let endTime = this.common.getTimes(nowDate);
     this.valueOnlineend = endTime; // 当前的时间点
-    this.valueDevStoreend=endTime
-    this.valueUsageend=endTime
-    this.valueFileend=endTime
+    this.valueDevStoreend = endTime;
+    this.valueUsageend = endTime;
+    this.valueFileend = endTime;
 
     //获取往前往前一星期时间
-    let befDate = new Date(nowDate.getTime() - 7 * 24 * 3600 * 1000)
+    let befDate = new Date(nowDate.getTime() - 7 * 24 * 3600 * 1000);
     let startTime = this.common.getTimes(befDate);
     this.valueOnlinestrat = startTime; // 向前推迟一周的时间点
-    this.valueDevStorestart=startTime
-    this.valueUsagestart=startTime
-    this.valueFilestart=startTime
-
+    this.valueDevStorestart = startTime;
+    this.valueUsagestart = startTime;
+    this.valueFilestart = startTime;
 
     //this.getNowFormatDate()
 
@@ -215,7 +217,6 @@ export default {
       startTime: this.valueOnlinestrat,
       endTime: this.valueOnlineend
     };
-
 
     //tilte展示数据
     querySummary().then(data => {
@@ -242,68 +243,100 @@ export default {
         });
       } else {
       }
-    });
-
-    //在线结点数
-    queryOnlineNodeHistgraphs(timeParams).then(data => {
-      let { msg, result } = data;
-      if (result == "ok") {
-        this.NodeHistgraphsDataX = data.data.dateList;
-        this.NodeHistgraphsDataY = data.data.onlineNodeCntDailyList;
-        this.drawColumnChart();
-      } else {
+    }).catch(error => {
         this.$message({
-          message: msg,
+          message: "网络出错，请重新请求",
           type: "error"
         });
-      }
-    });
+      });
+    //在线结点数
+    queryOnlineNodeHistgraphs(timeParams)
+      .then(data => {
+        let { msg, result } = data;
+        if (result == "ok") {
+          this.NodeHistgraphsDataX = data.data.dateList;
+          this.NodeHistgraphsDataY = data.data.onlineNodeCntDailyList;
+          this.drawColumnChart();
+        } else {
+          this.$message({
+            message: msg,
+            type: "error"
+          });
+        }
+      })
+      .catch(error => {
+        this.$message({
+          message: "网络出错，请重新请求",
+          type: "error"
+        });
+      });
 
     //存储量/存储空间
-    queryDevStoreHistgraph(timeParams).then(data => {
-      let { msg, result } = data;
-      if (result == "ok") {
-        this.DevStoreHistgraphDataX = data.data.dateList;
-        this.DevStoreHistgraphDataY = data.data.totalDevCapList;
-        this.DevStoreHistgraphDataYY = data.data.ipfsCapList;
-        this.drawBarChart();
-      } else {
+    queryDevStoreHistgraph(timeParams)
+      .then(data => {
+        let { msg, result } = data;
+        if (result == "ok") {
+          this.DevStoreHistgraphDataX = data.data.dateList;
+          this.DevStoreHistgraphDataY = data.data.totalDevCapList;
+          this.DevStoreHistgraphDataYY = data.data.ipfsCapList;
+          this.drawBarChart();
+        } else {
+          this.$message({
+            message: msg,
+            type: "error"
+          });
+        }
+      })
+      .catch(error => {
         this.$message({
-          message: msg,
+          message: "网络出错，请重新请求",
           type: "error"
         });
-      }
-    });
+      });
 
     //实际存储数据量
-    queryStoreUsageHistgraph(timeParams).then(data => {
-      let { msg, result } = data;
-      if (result == "ok") {
-        this.UsageHistgraphDataX = data.data.dateList;
-        this.UsageHistgraphDataY = data.data.storeUsage;
-        this.drawLineChart();
-      } else {
+    queryStoreUsageHistgraph(timeParams)
+      .then(data => {
+        let { msg, result } = data;
+        if (result == "ok") {
+          this.UsageHistgraphDataX = data.data.dateList;
+          this.UsageHistgraphDataY = data.data.storeUsage;
+          this.drawLineChart();
+        } else {
+          this.$message({
+            message: msg,
+            type: "error"
+          });
+        }
+      })
+      .catch(error => {
         this.$message({
-          message: msg,
+          message: "网络出错，请重新请求",
           type: "error"
         });
-      }
-    });
+      });
 
     //储存文件数
-    queryFileCntHistgraph(timeParams).then(data => {
-      let { msg, result } = data;
-      if (result == "ok") {
-        this.FileCntHistgraphDataX = data.data.dateList;
-        this.FileCntHistgraphDataY = data.data.fileCnt;
-        this.drawPieChart();
-      } else {
+    queryFileCntHistgraph(timeParams)
+      .then(data => {
+        let { msg, result } = data;
+        if (result == "ok") {
+          this.FileCntHistgraphDataX = data.data.dateList;
+          this.FileCntHistgraphDataY = data.data.fileCnt;
+          this.drawPieChart();
+        } else {
+          this.$message({
+            message: msg,
+            type: "error"
+          });
+        }
+      })
+      .catch(error => {
         this.$message({
-          message: msg,
+          message: "网络出错，请重新请求",
           type: "error"
         });
-      }
-    });
+      });
     //this.drawCharts();
   },
 
@@ -490,7 +523,6 @@ export default {
     },
     //
     getSTimeOnlineend(val) {
-      //valueOnlineend
       this.valueOnlineend = val;
     },
     getSTimeDevStorestart(val) {
@@ -514,118 +546,161 @@ export default {
 
     //点击刷新请求数据
     getData(e) {
-  
       switch (e) {
-        case 1: 
+        case 1:
           var timeParams = {
             startTime: this.valueOnlinestrat,
             endTime: this.valueOnlineend
           };
-          //判断结束时间是否大于起始时间
-          var  timeStatus=this.common.checkTimes(timeParams.startTime,timeParams.endTime)
-          if(timeStatus==false){
-               this.$message.error('结束时间必须大于起始时间')
-               return false
+          // alert(new Date(timeParams.startTime).getTime())
+          // alert(new Date(timeParams.endTime).getTime())
+          // alert(JSON.stringify(timeParams))
+         // 判断结束时间是否大于起始时间
+          var timeStatus = this.common.checkTimes(
+            timeParams.startTime,
+            timeParams.endTime
+          );
+        
+          if (timeStatus == false) {
+            this.$message.error("结束时间必须大于起始时间");
+            return false;
           }
-             //在线节点数
-          queryOnlineNodeHistgraphs(timeParams).then(data => {
-            let { msg, result } = data;
-            if (result == "ok") {
-              this.NodeHistgraphsDataX = data.data.dateList;
-              this.NodeHistgraphsDataY = data.data.onlineNodeCntDailyList;
-              this.drawColumnChart();
-            } else {
+         
+          //在线节点数
+          queryOnlineNodeHistgraphs(timeParams)
+            .then(data => {
+              let { msg, result } = data;
+              if (result == "ok") {
+                this.NodeHistgraphsDataX = data.data.dateList;
+                this.NodeHistgraphsDataY = data.data.onlineNodeCntDailyList;
+                this.drawColumnChart();
+              } else {
+                this.$message({
+                  message: msg,
+                  type: "error"
+                });
+              }
+            })
+            .catch(error => {
               this.$message({
-                message: msg,
+                message: "网络出错，请重新请求",
                 type: "error"
               });
-            }
-          });
-        
+            });
+
           break;
         case 2:
           var timeParams = {
             startTime: this.valueDevStorestart,
             endTime: this.valueDevStoreend
           };
-           //判断结束时间是否大于起始时间
-          var timeStatus=this.common.checkTimes(timeParams.startTime,timeParams.endTime)
-          if(timeStatus==false){
-               this.$message.error('结束时间必须大于起始时间')
-               return false
+          //判断结束时间是否大于起始时间
+          var timeStatus = this.common.checkTimes(
+            timeParams.startTime,
+            timeParams.endTime
+          );
+          if (timeStatus == false) {
+            this.$message.error("结束时间必须大于起始时间");
+            return false;
           }
           //存储量/存储空间
-          queryDevStoreHistgraph(timeParams).then(data => {
-            let { msg, result } = data;
-            if (result == "ok") {
-              this.DevStoreHistgraphDataX = data.data.dateList;
-              this.DevStoreHistgraphDataY = data.data.totalDevCapList;
-              this.DevStoreHistgraphDataYY = data.data.ipfsCapList;
-              this.drawBarChart();
-            } else {
+          queryDevStoreHistgraph(timeParams)
+            .then(data => {
+              let { msg, result } = data;
+              if (result == "ok") {
+                this.DevStoreHistgraphDataX = data.data.dateList;
+                this.DevStoreHistgraphDataY = data.data.totalDevCapList;
+                this.DevStoreHistgraphDataYY = data.data.ipfsCapList;
+                this.drawBarChart();
+              } else {
+                this.$message({
+                  message: msg,
+                  type: "error"
+                });
+              }
+            })
+            .catch(error => {
               this.$message({
-                message: msg,
+                message: "网络出错，请重新请求",
                 type: "error"
               });
-            }
-          });
+            });
           break;
         case 3:
           var timeParams = {
             startTime: this.valueUsagestart,
             endTime: this.valueUsageend
           };
-           //判断结束时间是否大于起始时间
-          var timeStatus=this.common.checkTimes(timeParams.startTime,timeParams.endTime)
-          if(timeStatus==false){
-               this.$message.error('结束时间必须大于起始时间')
-               return false
+          //判断结束时间是否大于起始时间
+          var timeStatus = this.common.checkTimes(
+            timeParams.startTime,
+            timeParams.endTime
+          );
+          if (timeStatus == false) {
+            this.$message.error("结束时间必须大于起始时间");
+            return false;
           }
           //实际存储数据量
-          queryStoreUsageHistgraph(timeParams).then(data => {
-            let { msg, result } = data;
-            if (result == "ok") {
-              this.UsageHistgraphDataX = data.data.dateList;
-              this.UsageHistgraphDataY = data.data.storeUsage;
-              this.drawLineChart();
-            } else {
+          queryStoreUsageHistgraph(timeParams)
+            .then(data => {
+              let { msg, result } = data;
+              if (result == "ok") {
+                this.UsageHistgraphDataX = data.data.dateList;
+                this.UsageHistgraphDataY = data.data.storeUsage;
+                this.drawLineChart();
+              } else {
+                this.$message({
+                  message: msg,
+                  type: "error"
+                });
+              }
+            })
+            .catch(error => {
               this.$message({
-                message: msg,
+                message: "网络出错，请重新请求",
                 type: "error"
               });
-            }
-          });
+            });
           break;
         case 4:
           var timeParams = {
             startTime: this.valueFilestart,
             endTime: this.valueFileend
           };
-           //判断结束时间是否大于起始时间
-          var timeStatus=this.common.checkTimes(timeParams.startTime,timeParams.endTime)
-          if(timeStatus==false){
-               this.$message.error('结束时间必须大于起始时间')
-               return false
+          //判断结束时间是否大于起始时间
+          var timeStatus = this.common.checkTimes(
+            timeParams.startTime,
+            timeParams.endTime
+          );
+          if (timeStatus == false) {
+            this.$message.error("结束时间必须大于起始时间");
+            return false;
           }
           //储存文件数
-          queryFileCntHistgraph(timeParams).then(data => {
-            let { msg, result } = data;
-            if (result == "ok") {
-              this.FileCntHistgraphDataX = data.data.dateList;
-              this.FileCntHistgraphDataY = data.data.fileCnt;
-              this.drawPieChart();
-            } else {
+          queryFileCntHistgraph(timeParams)
+            .then(data => {
+              let { msg, result } = data;
+              if (result == "ok") {
+                this.FileCntHistgraphDataX = data.data.dateList;
+                this.FileCntHistgraphDataY = data.data.fileCnt;
+                this.drawPieChart();
+              } else {
+                this.$message({
+                  message: msg,
+                  type: "error"
+                });
+              }
+            })
+            .catch(error => {
               this.$message({
-                message: msg,
+                message: "网络出错，请重新请求",
                 type: "error"
               });
-            }
-          });
+            });
           break;
       }
     }
   }
-
 };
 </script>
 
@@ -633,8 +708,7 @@ export default {
 .chart-container {
   // width: 100%;
   float: left;
-  min-width: 1450px;
-
+  min-width: 1500px;
 }
 
 .el-col {
@@ -647,57 +721,33 @@ export default {
   color: #ffffff;
   font-size: 16px;
 }
-.new_cont_active1{
-  background-image: linear-gradient(159deg, 
-		#b87cf6 0%, 
-		#903be7 100%), 
-	linear-gradient(
-		#ffffff, 
-		#ffffff);
-	background-blend-mode: normal, 
-		normal;
-	box-shadow: 3px 0px 7px 0px 
-		rgba(0, 0, 0, 0.12);
-	border-radius: 4px;
+.new_cont_active1 {
+  background-image: linear-gradient(159deg, #b87cf6 0%, #903be7 100%),
+    linear-gradient(#ffffff, #ffffff);
+  background-blend-mode: normal, normal;
+  box-shadow: 3px 0px 7px 0px rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
 }
-.new_cont_active2{
- background-image: linear-gradient(-53deg, 
-		#3d5bd9 0%, 
-		#71a2e0 100%), 
-	linear-gradient(
-		#ffffff, 
-		#ffffff);
-	background-blend-mode: normal, 
-		normal;
-	box-shadow: 3px 0px 7px 0px 
-		rgba(0, 0, 0, 0.12);
-	border-radius: 4px;
+.new_cont_active2 {
+  background-image: linear-gradient(-53deg, #3d5bd9 0%, #71a2e0 100%),
+    linear-gradient(#ffffff, #ffffff);
+  background-blend-mode: normal, normal;
+  box-shadow: 3px 0px 7px 0px rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
 }
-.new_cont_active3{
-  background-image: linear-gradient(-90deg, 
-		#fb9a8d 0%, 
-		#feb485 100%), 
-	linear-gradient(
-		#ffffff, 
-		#ffffff);
-	background-blend-mode: normal, 
-		normal;
-	box-shadow: 3px 0px 7px 0px 
-		rgba(0, 0, 0, 0.12);
-	border-radius: 4px;
+.new_cont_active3 {
+  background-image: linear-gradient(-90deg, #fb9a8d 0%, #feb485 100%),
+    linear-gradient(#ffffff, #ffffff);
+  background-blend-mode: normal, normal;
+  box-shadow: 3px 0px 7px 0px rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
 }
-.new_cont_active4{
-  background-image: linear-gradient(-90deg, 
-		#ff463f 0%, 
-		#ff8157 100%), 
-	linear-gradient(
-		#ffffff, 
-		#ffffff);
-	background-blend-mode: normal, 
-		normal;
-	box-shadow: 3px 0px 7px 0px 
-		rgba(0, 0, 0, 0.12);
-	border-radius: 4px;
+.new_cont_active4 {
+  background-image: linear-gradient(-90deg, #ff463f 0%, #ff8157 100%),
+    linear-gradient(#ffffff, #ffffff);
+  background-blend-mode: normal, normal;
+  box-shadow: 3px 0px 7px 0px rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
 }
 .new_cont .item_one {
   padding-top: 20px;
@@ -717,5 +767,4 @@ export default {
     margin-left: 20px;
   }
 }
-
 </style>

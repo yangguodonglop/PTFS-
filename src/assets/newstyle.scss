@@ -1,7 +1,16 @@
 .container .header .logo img{
    width: auto;
 }
+.el-submenu_title{
+   color: #ffffff;
+}
 .myownStyle{
+   .el-submenu__title{
+      color: #ffffff;
+   }
+   .el-menu-item, .el-submenu__title{
+   color: #ffffff;
+   }
    .container .main{
       top:80px;
    }

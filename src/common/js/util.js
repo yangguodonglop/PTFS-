@@ -73,11 +73,13 @@ export default {
         return  endTime
     },
     checkTimes:function(a,b){
-        if(a>=b){
-            return false
+        var startTime=new Date(a).getTime()
+        var endTime=new Date(b).getTime()
+        if(endTime-startTime>=0){
+            return true
         }
         else{
-            return true
+            return false
         }
     },
   

@@ -1,7 +1,7 @@
 <template>
 	<div class="kabfa_con">
 			<el-button type="primary">
-				<a href=" http://47.99.193.140:8080/" target="_blank">kafka分区及消息监控</a>
+				<a href=" http://47.99.193.140:8080/clusters/PTFS-Kafka/topics" target="_blank">kafka分区及消息监控</a>
 				
 			</el-button>
 			
