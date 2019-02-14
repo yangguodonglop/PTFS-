@@ -28,6 +28,7 @@
         </el-row>
         <el-row>
             <el-col :span="12">
+              
                 <div class="div_item" style="width:100%;height:50px;">
                     <div class="item_start">
                          <span class="demonstration">开始时间:</span>
