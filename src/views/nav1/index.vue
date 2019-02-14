@@ -219,31 +219,33 @@ export default {
     };
 
     //tilte展示数据
-    querySummary().then(data => {
-      //this.logining = false;
-      //NProgress.done();
+    querySummary()
+      .then(data => {
+        //this.logining = false;
+        //NProgress.done();
 
-      if (data.data.OnlineNodeCount == "--") {
-        this.datatwoactive = 0; //存储空间
-        this.dataOne = 0; //在线节点个数
-        this.datatwo = 0; //存储量
-      } else {
-        this.dataOne = data.data.OnlineNodeCount;
-        this.datatwo = data.data.OnlineNodeCount / 1000;
-        this.datatwoactive = data.data.OnlineNodeCount;
-      }
+        if (data.data.OnlineNodeCount == "--") {
+          this.datatwoactive = 0; //存储空间
+          this.dataOne = 0; //在线节点个数
+          this.datatwo = 0; //存储量
+        } else {
+          this.dataOne = data.data.OnlineNodeCount;
+          this.datatwo = data.data.OnlineNodeCount / 1000;
+          this.datatwoactive = data.data.OnlineNodeCount;
+        }
 
-      this.datafour = data.data.TotalFileCnt; //实际存储数据量
-      this.datathree = data.data.TotalStoreUsage; //实际存储文件个数
-      let { msg, result } = data;
-      if (result !== "ok") {
-        this.$message({
-          message: msg,
-          type: "error"
-        });
-      } else {
-      }
-    }).catch(error => {
+        this.datafour = data.data.TotalFileCnt; //实际存储数据量
+        this.datathree = data.data.TotalStoreUsage; //实际存储文件个数
+        let { msg, result } = data;
+        if (result !== "ok") {
+          this.$message({
+            message: msg,
+            type: "error"
+          });
+        } else {
+        }
+      })
+      .catch(error => {
         this.$message({
           message: "网络出错，请重新请求",
           type: "error"
@@ -426,13 +428,13 @@ export default {
           {
             name: "储存量",
             type: "line",
-            stack: "总量",
+
             data: this.DevStoreHistgraphDataY
           },
           {
             name: "储存空间",
             type: "line",
-            stack: "总量",
+        
             data: this.DevStoreHistgraphDataYY
           }
         ]
@@ -555,17 +557,17 @@ export default {
           // alert(new Date(timeParams.startTime).getTime())
           // alert(new Date(timeParams.endTime).getTime())
           // alert(JSON.stringify(timeParams))
-         // 判断结束时间是否大于起始时间
+          // 判断结束时间是否大于起始时间
           var timeStatus = this.common.checkTimes(
             timeParams.startTime,
             timeParams.endTime
           );
-        
+
           if (timeStatus == false) {
             this.$message.error("结束时间必须大于起始时间");
             return false;
           }
-         
+
           //在线节点数
           queryOnlineNodeHistgraphs(timeParams)
             .then(data => {

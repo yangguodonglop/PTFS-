@@ -17,7 +17,8 @@ module.exports = {
     'element-ui': 'ElementUI',
      //'echarts': 'echarts',
      'vue-router': 'VueRouter',
-     'axios':'axios'
+     'axios':'axios',
+     'jquery': '$',
       //  'v-charts':'VCharts',
     //  'VCharts':'v-charts',
   },

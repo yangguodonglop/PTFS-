@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 let base = '';
-let ownbase='http://47.99.193.140:8083'//服务器接口
-//let ownbase='http://192.168.0.182:8088'//本地接口
+//let ownbase='http://47.99.193.140:8083'//服务器接口
+let ownbase='http://192.168.0.182:9999'//本地接口
 //let ownbase='http://192.168.0.115:8085'//本地接口
 
 //let ownbaselogin='http://mapi.xinlv123.com/xltx/login'
@@ -102,6 +102,11 @@ export const updateNodeConfig= params => { return axios.post(`${ownbase}/PTFSFil
 export const queryRegionGroupInfo= params => { return axios.post(`${ownbase}/PTFSNodeManage/queryRegionGroupInfo`, params).then(res => res.data); };
 //分区分组点击组数查看i详情
 export const queryGroupInfo= params => { return axios.post(`${ownbase}/PTFSNodeManage/queryGroupInfo`, params).then(res => res.data); };
+
+//缓存，备份更新后
+export const queryAllNodesProfiles= params => { return axios.post(`${ownbase}/PTFSNodeManage/queryAllNodesProfiles`, params).then(res => res.data); };
+
+
 
 
 
